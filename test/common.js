@@ -41,7 +41,6 @@ async function verifyTx(url, tx, privateKey, chainName, callback) {
     let stdTx = builder.buildAndSignTx(tx, privateKey);
     console.log(JSON.stringify(stdTx));
     let exp = stdTx.Hash();
-    let exp = '';
     console.log(JSON.stringify(exp));
     let payload = stdTx.getData();
     let response = await sendByAsync("POST",url,payload);

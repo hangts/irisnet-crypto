@@ -42,7 +42,7 @@ module.exports = class StdTx {
      * @returns SignDoc  protobuf.Tx.SignDoc 
      */
     getSignDoc(){
-        if (!this.hasPublicKey()) {
+        if (!this.hasPubKey()) {
             throw new Error("please set pubKey");
         }
         let signDoc = new Tx_pb.SignDoc();
@@ -57,7 +57,7 @@ module.exports = class StdTx {
      *  是否已导入public key
      * @returns true/false
      */
-    hasPublicKey(){
+    hasPubKey(){
         return this.authInfo.getSignerInfosList().length > 0;
     }
 

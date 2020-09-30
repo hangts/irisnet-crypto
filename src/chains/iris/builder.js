@@ -96,8 +96,7 @@ class IrisBuilder extends Builder {
                 throw new Error("stdTx is not instanceof Tx");
         }
 
-        if (!stdTx.hasPublicKey()) {
-            console.log('9999999999999999999999');
+        if (!stdTx.hasPubKey()) {
             let keypair = IrisKeypair.import(privateKey);
             stdTx.setPubKey(keypair.publicKey);
         }
