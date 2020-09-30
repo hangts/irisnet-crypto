@@ -89,8 +89,8 @@ amino.RegisterConcrete(null, Config.cosmos.amino.signature);
 // amino.RegisterConcrete(R_Cosmos.cosmos.MsgBeginRedelegate, Config.cosmos.tx.beginRedelegate.prefix);
 // amino.RegisterConcrete(R_Cosmos.cosmos.StdTx, Config.cosmos.tx.stdTx.prefix);
 
-// amino.RegisterConcrete(null, Config.iris.amino.pubKey);
-// amino.RegisterConcrete(null, Config.iris.amino.signature);
+amino.RegisterConcrete(null, Config.iris.amino.pubKey);
+amino.RegisterConcrete(null, Config.iris.amino.signature);
 // amino.RegisterConcrete(R_Iris.irisnet.tx.MsgDelegate, Config.iris.tx.delegate.prefix);
 // amino.RegisterConcrete(R_Iris.irisnet.tx.MsgSend, Config.iris.tx.transfer.prefix);
 // amino.RegisterConcrete(R_Iris.irisnet.tx.MsgBeginRedelegate, Config.iris.tx.redelegate.prefix);
