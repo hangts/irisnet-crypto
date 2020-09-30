@@ -128,15 +128,15 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.denom = reader.string();
-                            break;
-                        case 2:
-                            message.amount = reader.string();
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.denom = reader.string();
+                        break;
+                    case 2:
+                        message.amount = reader.string();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("denom"))
@@ -341,17 +341,17 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.address = reader.bytes();
-                            break;
-                        case 2:
-                            if (!(message.coins && message.coins.length))
-                                message.coins = [];
-                            message.coins.push($root.irisnet.tx.Coin.decode(reader, reader.uint32()));
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.address = reader.bytes();
+                        break;
+                    case 2:
+                        if (!(message.coins && message.coins.length))
+                            message.coins = [];
+                        message.coins.push($root.irisnet.tx.Coin.decode(reader, reader.uint32()));
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("address"))
@@ -581,17 +581,17 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.address = reader.bytes();
-                            break;
-                        case 2:
-                            if (!(message.coins && message.coins.length))
-                                message.coins = [];
-                            message.coins.push($root.irisnet.tx.Coin.decode(reader, reader.uint32()));
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.address = reader.bytes();
+                        break;
+                    case 2:
+                        if (!(message.coins && message.coins.length))
+                            message.coins = [];
+                        message.coins.push($root.irisnet.tx.Coin.decode(reader, reader.uint32()));
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("address"))
@@ -824,19 +824,19 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            if (!(message.input && message.input.length))
-                                message.input = [];
-                            message.input.push($root.irisnet.tx.Input.decode(reader, reader.uint32()));
-                            break;
-                        case 2:
-                            if (!(message.output && message.output.length))
-                                message.output = [];
-                            message.output.push($root.irisnet.tx.Output.decode(reader, reader.uint32()));
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        if (!(message.input && message.input.length))
+                            message.input = [];
+                        message.input.push($root.irisnet.tx.Input.decode(reader, reader.uint32()));
+                        break;
+                    case 2:
+                        if (!(message.output && message.output.length))
+                            message.output = [];
+                        message.output.push($root.irisnet.tx.Output.decode(reader, reader.uint32()));
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 return message;
@@ -1080,18 +1080,18 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.delegatorAddr = reader.bytes();
-                            break;
-                        case 2:
-                            message.validatorAddr = reader.bytes();
-                            break;
-                        case 3:
-                            message.delegation = $root.irisnet.tx.Coin.decode(reader, reader.uint32());
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.delegatorAddr = reader.bytes();
+                        break;
+                    case 2:
+                        message.validatorAddr = reader.bytes();
+                        break;
+                    case 3:
+                        message.delegation = $root.irisnet.tx.Coin.decode(reader, reader.uint32());
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("delegatorAddr"))
@@ -1301,8 +1301,7 @@ $root.irisnet = (function() {
                     writer = $Writer.create();
                 writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.delegatorAddr);
                 writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.validatorAddr);
-                let shares = message.sharesAmount.replace(".",""); //fuck
-                writer.uint32(/* id 3, wireType 2 =*/26).string(shares);
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.sharesAmount);
                 return writer;
             };
 
@@ -1337,18 +1336,18 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.delegatorAddr = reader.bytes();
-                            break;
-                        case 2:
-                            message.validatorAddr = reader.bytes();
-                            break;
-                        case 3:
-                            message.sharesAmount = reader.string();
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.delegatorAddr = reader.bytes();
+                        break;
+                    case 2:
+                        message.validatorAddr = reader.bytes();
+                        break;
+                    case 3:
+                        message.sharesAmount = reader.string();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("delegatorAddr"))
@@ -1562,8 +1561,7 @@ $root.irisnet = (function() {
                 writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.delegatorAddr);
                 writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.validatorSrcAddr);
                 writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.validatorDstAddr);
-                let shares = message.sharesAmount.replace(".",""); //fuck
-                writer.uint32(/* id 4, wireType 2 =*/34).string(shares);
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.sharesAmount);
                 return writer;
             };
 
@@ -1598,21 +1596,21 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.delegatorAddr = reader.bytes();
-                            break;
-                        case 2:
-                            message.validatorSrcAddr = reader.bytes();
-                            break;
-                        case 3:
-                            message.validatorDstAddr = reader.bytes();
-                            break;
-                        case 4:
-                            message.sharesAmount = reader.string();
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.delegatorAddr = reader.bytes();
+                        break;
+                    case 2:
+                        message.validatorSrcAddr = reader.bytes();
+                        break;
+                    case 3:
+                        message.validatorDstAddr = reader.bytes();
+                        break;
+                    case 4:
+                        message.sharesAmount = reader.string();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("delegatorAddr"))
@@ -1849,12 +1847,12 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.delegatorAddr = reader.bytes();
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.delegatorAddr = reader.bytes();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("delegatorAddr"))
@@ -2055,15 +2053,15 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.delegatorAddr = reader.bytes();
-                            break;
-                        case 2:
-                            message.validatorAddr = reader.bytes();
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.delegatorAddr = reader.bytes();
+                        break;
+                    case 2:
+                        message.validatorAddr = reader.bytes();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("delegatorAddr"))
@@ -2283,15 +2281,15 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.address = reader.bytes();
-                            break;
-                        case 2:
-                            message.coin = $root.irisnet.tx.Coin.decode(reader, reader.uint32());
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.address = reader.bytes();
+                        break;
+                    case 2:
+                        message.coin = $root.irisnet.tx.Coin.decode(reader, reader.uint32());
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("address"))
@@ -2508,15 +2506,15 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.address = reader.bytes();
-                            break;
-                        case 2:
-                            message.coin = $root.irisnet.tx.Coin.decode(reader, reader.uint32());
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.address = reader.bytes();
+                        break;
+                    case 2:
+                        message.coin = $root.irisnet.tx.Coin.decode(reader, reader.uint32());
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("address"))
@@ -2753,21 +2751,21 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.input = $root.irisnet.tx.SwapInput.decode(reader, reader.uint32());
-                            break;
-                        case 2:
-                            message.output = $root.irisnet.tx.SwapOutput.decode(reader, reader.uint32());
-                            break;
-                        case 3:
-                            message.deadline = reader.int64();
-                            break;
-                        case 4:
-                            message.isBuyOrder = reader.bool();
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.input = $root.irisnet.tx.SwapInput.decode(reader, reader.uint32());
+                        break;
+                    case 2:
+                        message.output = $root.irisnet.tx.SwapOutput.decode(reader, reader.uint32());
+                        break;
+                    case 3:
+                        message.deadline = reader.int64();
+                        break;
+                    case 4:
+                        message.isBuyOrder = reader.bool();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("input"))
@@ -3043,24 +3041,24 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.maxToken = $root.irisnet.tx.Coin.decode(reader, reader.uint32());
-                            break;
-                        case 2:
-                            message.exactIrisAmt = reader.string();
-                            break;
-                        case 3:
-                            message.minLiquidity = reader.string();
-                            break;
-                        case 4:
-                            message.deadline = reader.int64();
-                            break;
-                        case 5:
-                            message.sender = reader.bytes();
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.maxToken = $root.irisnet.tx.Coin.decode(reader, reader.uint32());
+                        break;
+                    case 2:
+                        message.exactIrisAmt = reader.string();
+                        break;
+                    case 3:
+                        message.minLiquidity = reader.string();
+                        break;
+                    case 4:
+                        message.deadline = reader.int64();
+                        break;
+                    case 5:
+                        message.sender = reader.bytes();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("maxToken"))
@@ -3348,24 +3346,24 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.minToken = reader.string();
-                            break;
-                        case 2:
-                            message.withdrawLiquidity = $root.irisnet.tx.Coin.decode(reader, reader.uint32());
-                            break;
-                        case 3:
-                            message.minIrisAmt = reader.string();
-                            break;
-                        case 4:
-                            message.deadline = reader.int64();
-                            break;
-                        case 5:
-                            message.sender = reader.bytes();
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.minToken = reader.string();
+                        break;
+                    case 2:
+                        message.withdrawLiquidity = $root.irisnet.tx.Coin.decode(reader, reader.uint32());
+                        break;
+                    case 3:
+                        message.minIrisAmt = reader.string();
+                        break;
+                    case 4:
+                        message.deadline = reader.int64();
+                        break;
+                    case 5:
+                        message.sender = reader.bytes();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("minToken"))
@@ -3626,17 +3624,17 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            if (!(message.amount && message.amount.length))
-                                message.amount = [];
-                            message.amount.push($root.irisnet.tx.Coin.decode(reader, reader.uint32()));
-                            break;
-                        case 2:
-                            message.gas = reader.int64();
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        if (!(message.amount && message.amount.length))
+                            message.amount = [];
+                        message.amount.push($root.irisnet.tx.Coin.decode(reader, reader.uint32()));
+                        break;
+                    case 2:
+                        message.gas = reader.int64();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("gas"))
@@ -3852,15 +3850,8 @@ $root.irisnet = (function() {
                     writer = $Writer.create();
                 writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.pubKey);
                 writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.signature);
-
-                // ===========================整形过滤掉零值================================
-                if (message.accountNumber !== 0) {
                 writer.uint32(/* id 3, wireType 0 =*/24).int64(message.accountNumber);
-                }
-                // ===========================整形过滤掉零值================================
-                if (message.sequence !== 0) {
                 writer.uint32(/* id 4, wireType 0 =*/32).int64(message.sequence);
-                }
                 return writer;
             };
 
@@ -3895,21 +3886,21 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            message.pubKey = reader.bytes();
-                            break;
-                        case 2:
-                            message.signature = reader.bytes();
-                            break;
-                        case 3:
-                            message.accountNumber = reader.int64();
-                            break;
-                        case 4:
-                            message.sequence = reader.int64();
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        message.pubKey = reader.bytes();
+                        break;
+                    case 2:
+                        message.signature = reader.bytes();
+                        break;
+                    case 3:
+                        message.accountNumber = reader.int64();
+                        break;
+                    case 4:
+                        message.sequence = reader.int64();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("pubKey"))
@@ -4166,7 +4157,7 @@ $root.irisnet = (function() {
                 if (message.signatures != null && message.signatures.length)
                     for (var i = 0; i < message.signatures.length; ++i)
                         $root.irisnet.tx.StdSignature.encode(message.signatures[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-                if (message.memo != null && message.hasOwnProperty("memo") && message.memo !== "")
+                if (message.memo != null && message.hasOwnProperty("memo"))
                     writer.uint32(/* id 4, wireType 2 =*/34).string(message.memo);
                 return writer;
             };
@@ -4202,25 +4193,25 @@ $root.irisnet = (function() {
                 while (reader.pos < end) {
                     var tag = reader.uint32();
                     switch (tag >>> 3) {
-                        case 1:
-                            if (!(message.msgs && message.msgs.length))
-                                message.msgs = [];
-                            message.msgs.push(reader.bytes());
-                            break;
-                        case 2:
-                            message.fee = $root.irisnet.tx.StdFee.decode(reader, reader.uint32());
-                            break;
-                        case 3:
-                            if (!(message.signatures && message.signatures.length))
-                                message.signatures = [];
-                            message.signatures.push($root.irisnet.tx.StdSignature.decode(reader, reader.uint32()));
-                            break;
-                        case 4:
-                            message.memo = reader.string();
-                            break;
-                        default:
-                            reader.skipType(tag & 7);
-                            break;
+                    case 1:
+                        if (!(message.msgs && message.msgs.length))
+                            message.msgs = [];
+                        message.msgs.push(reader.bytes());
+                        break;
+                    case 2:
+                        message.fee = $root.irisnet.tx.StdFee.decode(reader, reader.uint32());
+                        break;
+                    case 3:
+                        if (!(message.signatures && message.signatures.length))
+                            message.signatures = [];
+                        message.signatures.push($root.irisnet.tx.StdSignature.decode(reader, reader.uint32()));
+                        break;
+                    case 4:
+                        message.memo = reader.string();
+                        break;
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
                     }
                 }
                 if (!message.hasOwnProperty("fee"))

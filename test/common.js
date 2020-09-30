@@ -3,6 +3,7 @@ const Irisnet = require('../index');
 const chai = require('chai');
 const assert = chai.assert;
 const fetch = require('isomorphic-fetch');
+let axios = require('axios');
 
 const config = {
   iris:{
@@ -35,16 +36,23 @@ function randomHex(range){
     return str.toUpperCase();
 }
 
-async function verifyTx(url, tx, privateKey, chainName,callback) {
-    let builder = Irisnet.getBuilder(chainName,"testnet");
+async function verifyTx(url, tx, privateKey, chainName, callback) {
+    let builder = Irisnet.getBuilder(chainName,"");
     let stdTx = builder.buildAndSignTx(tx, privateKey);
-    //console.log(JSON.stringify(stdTx));
+    console.log(JSON.stringify(stdTx));
     let exp = stdTx.Hash();
-    //console.log(JSON.stringify(exp));
-    let payload = stdTx.GetData();
+    let exp = '';
+    console.log(JSON.stringify(exp));
+    let payload = stdTx.getData();
     let response = await sendByAsync("POST",url,payload);
     callback(response,exp,payload);
+}
 
+async function verifyTxRpc(url, tx, privateKey, chainName, callback, errCallback) {
+    let builder = Irisnet.getBuilder(chainName,"");
+    let stdTx = builder.buildAndSignTx(tx, privateKey);
+    let payload = stdTx.getData();
+    prcTxRequest(url, payload, callback, errCallback);
 }
 
 async function verifyAccount(url, account){
@@ -96,4 +104,27 @@ function sendByAsync(method,url,data){
     })
 }
 
-module.exports = {randomWord,randomHex,verifyTx,verifyAccount,sendBySync,getSequence};
+function prcTxRequest(url, txData, callback, errCallback){
+    let config = {
+      baseURL:url,
+      timeout:200000,
+      url:'/',
+    };
+    let instance = axios.create(config);
+    let data = {
+        jsonrpc: '2.0',
+        id: 'jsonrpc-client',
+        method:'broadcast_tx_commit',
+        params:{
+          tx:txData,
+        }
+    };
+    instance.post(url, data).then((res)=>{
+      callback ? callback(res.data) : null;
+    }).catch((err)=>{
+      console.log('rpc request error:',err);
+      errCallback ? errCallback(err) : null;
+    });
+}
+
+module.exports = {randomWord,randomHex,verifyTx,verifyTxRpc,verifyAccount,sendBySync,getSequence};

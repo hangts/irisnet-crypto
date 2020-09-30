@@ -4,95 +4,99 @@ const Builder = require("../../builder");
 const Utils = require('../../util/utils');
 const Amino = require('../base');
 const Config = require('../../../config');
+const Bech32 = require('bech32');
+
+const Staking_tx_pb = require('../../types/cosmos/staking/v1beta1/tx_pb');
+const TxModelCreator = require('../../util/txModelCreator');
+const TxHelper = require('../../util/txHelper');
 
 class MsgDelegate extends Builder.Msg {
 
-    constructor(delegator_addr, validator_addr, delegation) {
+    constructor(delegatorAddress, validatorAddress, amount) {
         super(Config.iris.tx.delegate.prefix);
-        this.delegator_addr = delegator_addr;
-        this.validator_addr = validator_addr;
-        this.delegation = delegation;
+        this.delegatorAddress = delegatorAddress;
+        this.validatorAddress = validatorAddress;
+        this.amount = amount;
+
+        // let Msg = new Staking_tx_pb.MsgDelegate();
+        // Msg.setDelegatorAddress(Buffer.from(Bech32.fromWords(del_words)));
+        // Msg.setValidatorAddress(Buffer.from(Bech32.fromWords(val_words)));
+        // Msg.setAmount(amount_delegate);
     }
 
-    GetSignBytes() {
+    getModelClass(){
+        return Staking_tx_pb.MsgDelegate;
+    }
 
-        let msg = {
-            "delegator_addr": this.delegator_addr,
-            "validator_addr": this.validator_addr,
-            "delegation": this.delegation
-        };
-
-        let sortMsg = Utils.sortObjectKeys(msg);
-        return Amino.MarshalJSON(this.Type(), sortMsg)
+    getModel(){
+        let msg = new (this.getModelClass())();
+        msg.setDelegatorAddress(TxHelper.ecodeModelAddress(this.delegatorAddress));
+        msg.setValidatorAddress(TxHelper.ecodeModelAddress(this.validatorAddress));
+        msg.setAmount(TxModelCreator.createCoinModel(this.amount.denom, this.amount.amount));
+        return msg;
     }
 
     ValidateBasic() {
-        if (Utils.isEmpty(this.delegator_addr)) {
-            throw new Error("delegator_addr is empty");
+        if (Utils.isEmpty(this.delegatorAddress)) {
+            throw new Error("delegatorAddress is empty");
         }
 
-        if (Utils.isEmpty(this.validator_addr)) {
-            throw new Error("validator_addr is empty");
+        if (Utils.isEmpty(this.validatorAddress)) {
+            throw new Error("validatorAddress is empty");
         }
 
-        if (Utils.isEmpty(this.delegation)) {
-            throw new Error("delegation must great than 0");
+        if (Utils.isEmpty(this.amount)) {
+            throw new Error("amount must great than 0");
         }
-    }
-
-    Type() {
-        return Config.iris.tx.delegate.prefix;
     }
 
     GetMsg() {
-        const BECH32 = require('bech32');
-        let delegator_key = BECH32.decode(this.delegator_addr);
-        let delegator_addr = BECH32.fromWords(delegator_key.words);
+        // let delegator_key = Bech32.decode(this.delegatorAddress);
+        // let delegator_addr = Bech32.fromWords(delegator_key.words);
 
-        let validator_key = BECH32.decode(this.validator_addr);
-        let validator_addr = BECH32.fromWords(validator_key.words);
+        // let validator_key = Bech32.decode(this.validatorAddress);
+        // let validator_addr = Bech32.fromWords(validator_key.words);
 
-        return {
-            delegatorAddr: delegator_addr,
-            validatorAddr: validator_addr,
-            delegation: this.delegation
-        }
+        // return {
+        //     delegatorAddr: delegator_addr,
+        //     validatorAddr: validator_addr,
+        //     delegation: this.delegation
+        // }
     }
 
     GetDisplayContent(){
-        return {
-            i18n_tx_type:"i18n_delegate",
-            i18n_delegator_addr:this.delegator_addr,
-            i18n_validator_addr:this.validator_addr,
-            i18n_amount:this.delegation,
-        }
+        // return {
+        //     i18n_tx_type:"i18n_delegate",
+        //     i18n_delegator_addr:this.delegatorAddress,
+        //     i18n_validator_addr:this.validatorAddress,
+        //     i18n_amount:this.amount,
+        // }
     }
-
 }
 
 class MsgBeginUnbonding extends Builder.Msg {
     constructor(delegator_addr, validator_addr, shares_amount) {
         super(Config.iris.tx.undelegate.prefix);
-        this.delegator_addr = delegator_addr;
-        this.validator_addr = validator_addr;
+        this.delegatorAddress = delegator_addr;
+        this.validatorAddress = validator_addr;
         this.shares_amount = shares_amount;
     }
 
     GetSignBytes() {
         let msg = {
-            "delegator_addr": this.delegator_addr,
-            "validator_addr": this.validator_addr,
+            "delegator_addr": this.delegatorAddress,
+            "validator_addr": this.validatorAddress,
             "shares_amount": this.shares_amount
         };
         return Utils.sortObjectKeys(msg)
     }
 
     ValidateBasic() {
-        if (Utils.isEmpty(this.delegator_addr)) {
+        if (Utils.isEmpty(this.delegatorAddress)) {
             throw new Error("delegator_addr is empty");
         }
 
-        if (Utils.isEmpty(this.validator_addr)) {
+        if (Utils.isEmpty(this.validatorAddress)) {
             throw new Error("validator_addr is empty");
         }
 
@@ -106,12 +110,11 @@ class MsgBeginUnbonding extends Builder.Msg {
     }
 
     GetMsg() {
-        const BECH32 = require('bech32');
-        let delegator_key = BECH32.decode(this.delegator_addr);
-        let delegator_addr = BECH32.fromWords(delegator_key.words);
+        let delegator_key = Bech32.decode(this.delegatorAddress);
+        let delegator_addr = Bech32.fromWords(delegator_key.words);
 
-        let validator_key = BECH32.decode(this.validator_addr);
-        let validator_addr = BECH32.fromWords(validator_key.words);
+        let validator_key = Bech32.decode(this.validatorAddress);
+        let validator_addr = Bech32.fromWords(validator_key.words);
 
         return {
             delegatorAddr: delegator_addr,
@@ -123,8 +126,8 @@ class MsgBeginUnbonding extends Builder.Msg {
     GetDisplayContent(){
         return {
             i18n_tx_type:"i18n_begin_unbonding",
-            i18n_delegator_addr:this.delegator_addr,
-            i18n_validator_addr:this.validator_addr,
+            i18n_delegator_addr:this.delegatorAddress,
+            i18n_validator_addr:this.validatorAddress,
             i18n_shares_amount:this.shares_amount,
         }
     }
@@ -135,7 +138,7 @@ class MsgBeginRedelegate extends Builder.Msg {
 
     constructor(delegator_addr, validator_src_addr, validator_dst_addr, shares_amount) {
         super(Config.iris.tx.redelegate.prefix);
-        this.delegator_addr = delegator_addr;
+        this.delegatorAddress = delegator_addr;
         this.validator_src_addr = validator_src_addr;
         this.validator_dst_addr = validator_dst_addr;
         this.shares_amount = shares_amount;
@@ -143,7 +146,7 @@ class MsgBeginRedelegate extends Builder.Msg {
 
     GetSignBytes() {
         let msg = {
-            "delegator_addr": this.delegator_addr,
+            "delegator_addr": this.delegatorAddress,
             "validator_src_addr": this.validator_src_addr,
             "validator_dst_addr": this.validator_dst_addr,
             "shares": this.shares_amount
@@ -152,7 +155,7 @@ class MsgBeginRedelegate extends Builder.Msg {
     }
 
     ValidateBasic() {
-        if (Utils.isEmpty(this.delegator_addr)) {
+        if (Utils.isEmpty(this.delegatorAddress)) {
             throw new Error("delegator_addr is empty");
         }
 
@@ -175,15 +178,14 @@ class MsgBeginRedelegate extends Builder.Msg {
     }
 
     GetMsg() {
-        const BECH32 = require('bech32');
-        let delegator_key = BECH32.decode(this.delegator_addr);
-        let delegator_addr = BECH32.fromWords(delegator_key.words);
+        let delegator_key = Bech32.decode(this.delegatorAddress);
+        let delegator_addr = Bech32.fromWords(delegator_key.words);
 
-        let validator_src_key = BECH32.decode(this.validator_src_addr);
-        let validator_src_addr = BECH32.fromWords(validator_src_key.words);
+        let validator_src_key = Bech32.decode(this.validator_src_addr);
+        let validator_src_addr = Bech32.fromWords(validator_src_key.words);
 
-        let validator_dst_key = BECH32.decode(this.validator_dst_addr);
-        let validator_dst_addr = BECH32.fromWords(validator_dst_key.words);
+        let validator_dst_key = Bech32.decode(this.validator_dst_addr);
+        let validator_dst_addr = Bech32.fromWords(validator_dst_key.words);
 
         return {
             delegatorAddr: delegator_addr,
@@ -196,7 +198,7 @@ class MsgBeginRedelegate extends Builder.Msg {
     GetDisplayContent(){
         return {
             i18n_tx_type:"i18n_redelegate",
-            i18n_delegator_addr:this.delegator_addr,
+            i18n_delegator_addr:this.delegatorAddress,
             i18n_validator_src_addr:this.validator_src_addr,
             i18n_validator_dst_addr:this.validator_dst_addr,
             i18n_shares_amount:this.shares_amount,
@@ -205,13 +207,8 @@ class MsgBeginRedelegate extends Builder.Msg {
 }
 
 module.exports = class Stake {
-    static CreateMsgDelegate(req) {
-        let delegation = {
-            denom: req.msg.delegation.denom,
-            amount: Utils.toString(req.msg.delegation.amount),
-        };
-        let msg = new MsgDelegate(req.from, req.msg.validator_addr, delegation);
-        return msg;
+    static CreateMsgDelegate(msg) {
+        return new MsgDelegate(msg.delegatorAddress, msg.validatorAddress, msg.amount);
     }
 
     static CreateMsgBeginUnbonding(req) {

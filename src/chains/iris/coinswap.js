@@ -1,278 +1,284 @@
+const Builder = require("../../builder");
 const Config = require('../../../config');
 const Amino = require('../base');
 const Root = require('./tx/tx');
 const BECH32 = require('bech32');
 const Utils = require('../../util/utils');
 
-const MsgSwapOrder = Root.irisnet.tx.MsgSwapOrder;
-MsgSwapOrder.prototype.type = Config.iris.tx.swapOrder.prefix;
-MsgSwapOrder.prototype.GetSignBytes = function () {
-    let sender = BECH32.encode(Config.iris.bech32.accAddr, this.input.address);
-    let receiver = BECH32.encode(Config.iris.bech32.accAddr, this.output.address);
-    let msg = {
-        input: {
-            address: sender,
-            coin: this.input.coin
-        },
-        output: {
-            address: receiver,
-            coin: this.output.coin
-        },
-        deadline: this.deadline,
-        is_buy_order: this.isBuyOrder
-    };
-    let sortMsg = Utils.sortObjectKeys(msg);
-    return Amino.MarshalJSON(this.type, sortMsg);
-};
-MsgSwapOrder.prototype.ValidateBasic = function () {
-    if (Utils.isEmpty(this.input)) {
-        throw new Error("input is  empty");
-    }
-    if (Utils.isEmpty(this.output)) {
-        throw new Error("output is  empty");
-    }
-    if (Utils.isEmpty(this.deadline)) {
-        throw new Error("deadline is  empty");
-    }
-    if (Utils.isEmpty(this.isBuyOrder)) {
-        throw new Error("isBuyOrder is  empty");
-    }
-};
-MsgSwapOrder.prototype.GetMsg = function () {
-    let sender = BECH32.fromWords(this.input.address);
-    let receiver = BECH32.fromWords(this.output.address);
-    let input = {
-        address: sender,
-        coin: this.input.coin
-    };
-    let output = {
-        address: receiver,
-        coin: this.output.coin
-    };
-    return {
-        input: input,
-        output: output,
-        deadline: this.deadline,
-        isBuyOrder: this.isBuyOrder
-    }
-};
-MsgSwapOrder.prototype.GetDisplayContent = function () {
-    let sender = BECH32.encode(Config.iris.bech32.accAddr, this.input.address);
-    let receiver = BECH32.encode(Config.iris.bech32.accAddr, this.output.address);
-    return {
-        i18n_tx_type: "i18n_swap_order",
-        i18n_input: {
-            address: sender,
-            coin: this.input.coin
-        },
-        i18n_output: {
-            address: receiver,
-            coin: this.output.coin
-        },
-        i18n_deadline: this.deadline,
-        i18n_is_buy_order: this.isBuyOrder
-    }
-};
-MsgSwapOrder.prototype.toJSON = function () {
-    let sender = BECH32.encode(Config.iris.bech32.accAddr, this.input.address);
-    let receiver = BECH32.encode(Config.iris.bech32.accAddr, this.output.address);
+const Coinswap_pb = require('../../types/cosmos/coinswap/coinswap_pb');
+const TxModelCreator = require('../../util/txModelCreator');
+const TxHelper = require('../../util/txHelper');
 
-    return {
-        input: {
-            address: sender,
-            coin: this.input.coin
-        },
-        output: {
-            address: receiver,
-            coin: this.output.coin
-        },
-        deadline: this.deadline,
-        is_buy_order: this.isBuyOrder
+class MsgSwapOrder extends Builder.Msg{
+    constructor(input, output, deadline, isBuyOrder){
+        super(Config.iris.tx.swapOrder.prefix);
+        this.input = input;
+        this.output = output;
+        this.deadline = deadline;
+        this.isBuyOrder = isBuyOrder;
     }
-};
 
-const MsgAddLiquidity = Root.irisnet.tx.MsgAddLiquidity;
-MsgAddLiquidity.prototype.type = Config.iris.tx.addLiquidity.prefix;
-MsgAddLiquidity.prototype.GetSignBytes = function () {
-    let sender = BECH32.encode(Config.iris.bech32.accAddr, this.sender);
-    let msg = {
-        max_token: this.maxToken,
-        exact_iris_amt: this.exactIrisAmt,
-        min_liquidity: this.minLiquidity,
-        deadline: this.deadline,
-        sender: sender
-    };
-    let sortMsg = Utils.sortObjectKeys(msg);
-    return Amino.MarshalJSON(this.type, sortMsg)
-};
-MsgAddLiquidity.prototype.ValidateBasic = function () {
-    if (Utils.isEmpty(this.maxToken)) {
-        throw new Error("maxToken is  empty");
+    getModelClass(){
+        return Coinswap_pb.MsgSwapOrder;
     }
-    if (Utils.isEmpty(this.exactIrisAmt)) {
-        throw new Error("exactIrisAmt is  empty");
-    }
-    if (Utils.isEmpty(this.minLiquidity)) {
-        throw new Error("minLiquidity is  empty");
-    }
-    if (Utils.isEmpty(this.deadline)) {
-        throw new Error("deadline is  empty");
-    }
-    if (Utils.isEmpty(this.sender)) {
-        throw new Error("sender is  empty");
-    }
-};
-MsgAddLiquidity.prototype.GetMsg = function () {
-    let sender = BECH32.fromWords(this.sender);
-    return {
-        maxToken: this.maxToken,
-        exactIrisAmt: this.exactIrisAmt,
-        minLiquidity: this.minLiquidity,
-        deadline: this.deadline,
-        sender: sender
-    }
-};
-MsgAddLiquidity.prototype.GetDisplayContent = function () {
-    let sender = BECH32.encode(Config.iris.bech32.accAddr, this.sender);
-    return {
-        i18n_tx_type: "i18n_add_liquidity",
-        i18n_max_token: this.maxToken,
-        i18n_exact_iris_amt: this.exactIrisAmt,
-        i18n_deadline: this.deadline,
-        i18n_min_liquidity: this.minLiquidity,
-        i18n_sender: sender
-    }
-};
-MsgAddLiquidity.prototype.toJSON = function () {
-    let sender = BECH32.encode(Config.iris.bech32.accAddr, this.sender);
-    return {
-        max_token: this.maxToken,
-        exact_iris_amt: this.exactIrisAmt,
-        min_liquidity: this.minLiquidity,
-        deadline: this.deadline,
-        sender: sender
-    }
-};
 
-const MsgRemoveLiquidity = Root.irisnet.tx.MsgRemoveLiquidity;
-MsgRemoveLiquidity.prototype.type = Config.iris.tx.removeLiquidity.prefix;
-MsgRemoveLiquidity.prototype.GetSignBytes = function () {
-    let sender = BECH32.encode(Config.iris.bech32.accAddr, this.sender);
-    let msg = {
-        min_token: this.minToken,
-        withdraw_liquidity: this.withdrawLiquidity,
-        min_iris_amt: this.minIrisAmt,
-        deadline: this.deadline,
-        sender: sender
+    getModel(){
+        let msg = new (this.getModelClass())();
+        
+        let inputModel = new Coinswap_pb.Input();
+        inputModel.setAddress(TxHelper.ecodeModelAddress(this.input.address));
+        inputModel.setCoin(TxModelCreator.createCoinModel(this.input.coin.denom, this.input.coin.amount));
+
+        let outputModel = new Coinswap_pb.Output();
+        outputModel.setAddress(TxHelper.ecodeModelAddress(this.output.address));
+        outputModel.setCoin(TxModelCreator.createCoinModel(this.output.coin.denom, this.input.coin.amount));
+
+        msg.setInput(inputModel);
+        msg.setOutput(outputModel);
+        msg.setDeadline(this.deadline);
+        msg.setIsBuyOrder(this.isBuyOrder);
+        return msg;
+    }
+
+    ValidateBasic() { 
+        if (Utils.isEmpty(this.input)) {
+            throw new Error("input is  empty");
+        }
+        if (Utils.isEmpty(this.output)) {
+            throw new Error("output is  empty");
+        }
+        if (Utils.isEmpty(this.deadline)) {
+            throw new Error("deadline is  empty");
+        }
+        if (Utils.isEmpty(this.isBuyOrder)) {
+            throw new Error("isBuyOrder is  empty");
+        }
+    }
+
+    GetMsg() {
+        // let sender = BECH32.fromWords(this.input.address);
+        // let receiver = BECH32.fromWords(this.output.address);
+        // let input = {
+        //     address: sender,
+        //     coin: this.input.coin
+        // };
+        // let output = {
+        //     address: receiver,
+        //     coin: this.output.coin
+        // };
+        // return {
+        //     input: input,
+        //     output: output,
+        //     deadline: this.deadline,
+        //     isBuyOrder: this.isBuyOrder
+        // }
     };
-    let sortMsg = Utils.sortObjectKeys(msg);
-    return Amino.MarshalJSON(this.type, sortMsg)
-};
-MsgRemoveLiquidity.prototype.ValidateBasic = function () {
-    if (Utils.isEmpty(this.minToken)) {
-        throw new Error("minToken is  empty");
+
+    GetDisplayContent() {
+        // let sender = BECH32.encode(Config.iris.bech32.accAddr, this.input.address);
+        // let receiver = BECH32.encode(Config.iris.bech32.accAddr, this.output.address);
+        // return {
+        //     i18n_tx_type: "i18n_swap_order",
+        //     i18n_input: {
+        //         address: sender,
+        //         coin: this.input.coin
+        //     },
+        //     i18n_output: {
+        //         address: receiver,
+        //         coin: this.output.coin
+        //     },
+        //     i18n_deadline: this.deadline,
+        //     i18n_is_buy_order: this.isBuyOrder
+        // }
+    };
+}
+
+class MsgAddLiquidity extends Builder.Msg{
+    constructor(max_token, exact_standard_amt, min_liquidity, deadline, sender){
+        super(Config.iris.tx.addLiquidity.prefix);
+        this.max_token = max_token;
+        this.exact_standard_amt = exact_standard_amt;
+        this.min_liquidity = min_liquidity;
+        this.deadline = deadline;
+        this.sender = sender;
     }
-    if (Utils.isEmpty(this.withdrawLiquidity)) {
-        throw new Error("withdrawLiquidity is  empty");
+
+    getModelClass(){
+        return Coinswap_pb.MsgAddLiquidity;
     }
-    if (Utils.isEmpty(this.minIrisAmt)) {
-        throw new Error("minIrisAmt is  empty");
+
+    getModel(){
+        let msg = new (this.getModelClass())();
+        msg.setMaxToken(TxModelCreator.createCoinModel(this.max_token.denom, this.max_token.amount));
+        msg.setExactStandardAmt(this.exact_standard_amt);
+        msg.setMinLiquidity(this.min_liquidity);
+        msg.setDeadline(this.deadline);
+        msg.setSender(TxHelper.ecodeModelAddress(this.sender));
+        return msg;
     }
-    if (Utils.isEmpty(this.deadline)) {
-        throw new Error("deadline is  empty");
+
+    ValidateBasic() { 
+        if (Utils.isEmpty(this.max_token)) {
+            throw new Error("max_token is  empty");
+        }
+        if (Utils.isEmpty(this.exact_standard_amt)) {
+            throw new Error("exact_standard_amt is  empty");
+        }
+        if (Utils.isEmpty(this.min_liquidity)) {
+            throw new Error("min_liquidity is  empty");
+        }
+        if (Utils.isEmpty(this.deadline)) {
+            throw new Error("deadline is  empty");
+        }
+        if (Utils.isEmpty(this.sender)) {
+            throw new Error("sender is  empty");
+        }
     }
-    if (Utils.isEmpty(this.sender)) {
-        throw new Error("sender is  empty");
+
+    GetMsg() {
+        // let sender = BECH32.fromWords(this.sender);
+        // return {
+        //         maxToken: this.maxToken,
+        //         exactIrisAmt: this.exactIrisAmt,
+        //         minLiquidity: this.minLiquidity,
+        //         deadline: this.deadline,
+        //         sender: sender
+        // }
+    };
+
+    GetDisplayContent() {
+        // let sender = BECH32.encode(Config.iris.bech32.accAddr, this.sender);
+        // return {
+        //     i18n_tx_type: "i18n_add_liquidity",
+        //     i18n_max_token: this.maxToken,
+        //     i18n_exact_iris_amt: this.exactIrisAmt,
+        //     i18n_deadline: this.deadline,
+        //     i18n_min_liquidity: this.minLiquidity,
+        //     i18n_sender: sender
+        // }
+    };
+}
+
+/////////////
+class MsgRemoveLiquidity extends Builder.Msg{
+    constructor(withdraw_liquidity, min_token, min_standard_amt, deadline, sender){
+        super(Config.iris.tx.removeLiquidity.prefix);
+        this.withdraw_liquidity = withdraw_liquidity;
+        this.min_token = min_token;
+        this.min_standard_amt = min_standard_amt;
+        this.deadline = deadline;
+        this.sender = sender;
     }
-};
-MsgRemoveLiquidity.prototype.GetMsg = function () {
-    let sender = BECH32.fromWords(this.sender);
-    return {
-        minToken: this.minToken,
-        withdrawLiquidity: this.withdrawLiquidity,
-        minIrisAmt: this.minIrisAmt,
-        deadline: this.deadline,
-        sender: sender
+
+    getModelClass(){
+        return Coinswap_pb.MsgRemoveLiquidity;
     }
-};
-MsgRemoveLiquidity.prototype.GetDisplayContent = function () {
-    let sender = BECH32.encode(Config.iris.bech32.accAddr, this.sender);
-    return {
-        i18n_tx_type: "i18n_remove_liquidity",
-        i18n_min_token: this.minToken,
-        i18n_withdraw_liquidity: this.withdrawLiquidity,
-        i18n_min_iris_amt: this.minIrisAmt,
-        i18n_deadline: this.deadline,
-        i18n_sender: sender
+
+    getModel(){
+        let msg = new (this.getModelClass())();
+        msg.setWithdrawLiquidity(TxModelCreator.createCoinModel(this.withdraw_liquidity.denom, this.withdraw_liquidity.amount));
+        msg.setMinToken(this.min_token);
+        msg.setMinStandardAmt(this.min_standard_amt);
+        msg.setDeadline(this.deadline);
+        msg.setSender(TxHelper.ecodeModelAddress(this.sender));
+        return msg;
     }
-};
-MsgRemoveLiquidity.prototype.toJSON = function () {
-    let sender = BECH32.encode(Config.iris.bech32.accAddr, this.sender);
-    return {
-        min_token: this.minToken,
-        withdraw_liquidity: this.withdrawLiquidity,
-        min_iris_amt: this.minIrisAmt,
-        deadline: this.deadline,
-        sender: sender
+
+    ValidateBasic() { 
+        if (Utils.isEmpty(this.withdraw_liquidity)) {
+            throw new Error("withdraw_liquidity is  empty");
+        }
+        if (Utils.isEmpty(this.min_token)) {
+            throw new Error("min_token is  empty");
+        }
+        if (Utils.isEmpty(this.min_standard_amt)) {
+            throw new Error("min_standard_amt is  empty");
+        }
+        if (Utils.isEmpty(this.deadline)) {
+            throw new Error("deadline is  empty");
+        }
+        if (Utils.isEmpty(this.sender)) {
+            throw new Error("sender is  empty");
+        }
     }
-};
+
+    GetMsg() {
+        // let sender = BECH32.fromWords(this.sender);
+        // return {
+        //     minToken: this.minToken,
+        //     withdrawLiquidity: this.withdrawLiquidity,
+        //     minIrisAmt: this.minIrisAmt,
+        //     deadline: this.deadline,
+        //     sender: sender
+        // }
+    };
+
+    GetDisplayContent() {
+        // let sender = BECH32.encode(Config.iris.bech32.accAddr, this.sender);
+        // return {
+        //     i18n_tx_type: "i18n_remove_liquidity",
+        //     i18n_min_token: this.minToken,
+        //     i18n_withdraw_liquidity: this.withdrawLiquidity,
+        //     i18n_min_iris_amt: this.minIrisAmt,
+        //     i18n_deadline: this.deadline,
+        //     i18n_sender: sender
+        // }
+    };
+}
 
 module.exports = class CoinSwap {
-    static createMsgAddLiquidity(req) {
+    static createMsgAddLiquidity(msg) {
         let maxToken = {
-            denom: req.msg.max_token.denom,
-            amount: Utils.toString(req.msg.max_token.amount),
+            denom: msg.max_token.denom,
+            amount: Utils.toString(msg.max_token.amount),
         };
-        let exactIrisAmt = Utils.toString(req.msg.exact_iris_amt);
-        let minLiquidity = Utils.toString(req.msg.min_liquidity);
-        return new MsgAddLiquidity({
-            maxToken: maxToken,
-            exactIrisAmt: exactIrisAmt,
-            minLiquidity: minLiquidity,
-            deadline: Utils.toString(req.msg.deadline),
-            sender: BECH32.decode(req.from).words
-        })
+        let exact_standard_amt = Utils.toString(msg.exact_standard_amt);
+        let min_liquidity = Utils.toString(msg.min_liquidity);
+        return new MsgAddLiquidity(
+            maxToken , 
+            exact_standard_amt, 
+            min_liquidity,
+            Utils.toString(msg.deadline),
+            msg.sender
+        );
     }
 
-    static createMsgRemoveLiquidity(req) {
+    static createMsgRemoveLiquidity(msg) {
         let withdrawLiquidity = {
-            denom: req.msg.withdraw_liquidity.denom,
-            amount: Utils.toString(req.msg.withdraw_liquidity.amount),
+            denom: msg.withdraw_liquidity.denom,
+            amount: Utils.toString(msg.withdraw_liquidity.amount),
         };
-        let minIrisAmt = Utils.toString(req.msg.min_iris_amt);
-        let minToken = Utils.toString(req.msg.min_token);
-        return new MsgRemoveLiquidity({
-            minToken: minToken,
-            withdrawLiquidity: withdrawLiquidity,
-            minIrisAmt: minIrisAmt,
-            deadline: Utils.toString(req.msg.deadline),
-            sender: BECH32.decode(req.from).words
-        })
+        let min_standard_amt = Utils.toString(msg.min_standard_amt);
+        let min_token = Utils.toString(msg.min_token);
+        return new MsgRemoveLiquidity(
+            withdrawLiquidity,
+            min_token,
+            min_standard_amt,
+            Utils.toString(msg.deadline),
+            msg.sender
+        );
     }
 
-    static createMsgSwapOrder(req) {
-        let sender = BECH32.decode(req.msg.input.address).words;
-        let receiver = BECH32.decode(req.msg.output.address).words;
-
+    static createMsgSwapOrder(msg) {
         let input = {
-            address: sender,
+            address: msg.input.address,
             coin: {
-                denom: req.msg.input.coin.denom,
-                amount: Utils.toString(req.msg.input.coin.amount),
+                denom: msg.input.coin.denom,
+                amount: Utils.toString(msg.input.coin.amount),
             },
         };
         let output = {
-            address: receiver,
+            address: msg.output.address,
             coin: {
-                denom: req.msg.output.coin.denom,
-                amount: Utils.toString(req.msg.output.coin.amount),
+                denom: msg.output.coin.denom,
+                amount: Utils.toString(msg.output.coin.amount),
             },
         };
-        return new MsgSwapOrder({
-            input: input,
-            output: output,
-            deadline: Utils.toString(req.msg.deadline),
-            isBuyOrder: req.msg.isBuyOrder,
-        });
+        return new MsgSwapOrder(
+            input,
+            output,
+            Utils.toString(msg.deadline),
+            msg.isBuyOrder
+        );
     }
 };

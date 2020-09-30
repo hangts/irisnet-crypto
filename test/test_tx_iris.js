@@ -4,371 +4,463 @@ const assert = chai.assert;
 
 const common = require('./common');
 //const url ="http://irisnet-lcd.dev.rainbow.one/tx/broadcast";
-const url ="http://localhost:1317/tx/broadcast?commit=true";
+const url ="http://106.53.32.134:1317/txs";
+const rpcUrl = 'http://106.53.32.134:26657';
 const chainName ="iris";
-
 
 describe('iris transaction', function () {
 
-    let chain_id = "irishub-test";
-    let from = "faa1f3vflz39qr5sjzfkqmkzkr5dy7t646wyexy92y";
-    let gas = 20000;
-    let account_number = 2;
-    let fees = {denom: "iris-atto", amount: 600000000000000000};
+    let chain_id = "test";
+    let from = "iaa14x8a7y88py9xkvkxzld3jxhgpjpm03whruzwzp";
+    let account_number = 7;
+    let fee = {
+        amount:[
+            {denom: "stake", amount: '60'}
+        ],
+        gasLimit:'200000'
+    };
     let memo = "1";
-    let privateKey = "80D45E1FAB9ACF59254F23C376E3AEAF139C847CD7A3126CDFD5216568730C90";
-    let pubKey = "fap1addwnpepqwqw5pshzzswemf6t00xvf0ccf2fxslaz40dp76uyad5mgujfju4zt8km3u";
+    let privateKey = "1E120611404C4B1B98FC899A8026A6A9823C35985DA3C5ED3FF57C170C822F60";
+    let pubKey = "iap1addwnpepqg36y5zqvpmre0rz7ep9z6s43g9jnd4za7w9z2ulu9lclktjh2d5zc5y9yu";
     let chain = Irisnet.config.chain.iris;
-
 
 
     //测试热钱包相关交易
     describe('test warm wallet tx', function () {
-        it('test simulate transfer', function () {
+        // it('test simulate transfer', function () {
+        //     let tx = {
+        //         chain_id: chain_id,
+        //         from: from,
+        //         account_number: account_number,
+        //         sequence: 57,
+        //         fees: fees,
+        //         gas: gas,
+        //         memo: memo,
+        //         type: Irisnet.config.iris.tx.transfer.type,
+        //         mode: Irisnet.config.iris.mode.try,
+        //         msg: {
+        //             to: "faa1s6v9qgu8ye7d884s8kpye64x66znndg8t6eztj",
+        //             coins: [
+        //                 {
+        //                     denom: "iris-atto",
+        //                     amount: 10000000000000000000
+        //                 }
+        //             ]
+        //         }
+        //     };
+
+        //     simulate(tx);
+        // });
+
+        // it('test transfer', function () {
+        //     let tx = {
+        //         chain_id: chain_id,
+        //         from: from,
+        //         account_number: account_number,
+        //         sequence: 0,
+        //         fees: fees,
+        //         gas: gas,
+        //         memo: memo,
+        //         type: Irisnet.config.iris.tx.transfer.type,
+        //         msg: {
+        //             to: "iaa1gytgufwqkz9tmhjgljfxd3qcwpdzymj6022q3w",
+        //             coins: [
+        //                 {
+        //                     denom: "uiris",
+        //                     amount: 11
+        //                 }
+        //             ]
+        //         }
+        //     };
+
+        //     common.verifyTx(url,tx,privateKey,chainName,verify);
+        // });
+
+        // it('test delegate', function () {
+        //     let tx = {
+        //         chain_id: chain_id,
+        //         account_number: account_number,
+        //         sequence: 9,
+        //         fee: fee,
+        //         memo: memo,
+        //         msgs: [
+        //             {
+        //                 type:Irisnet.config.iris.tx.delegate.type,
+        //                 value:{
+        //                     delegatorAddress:from,
+        //                     validatorAddress: "iva1jawm6yadku5ura9lrtjstpe30kh6vl6uhhypuv",
+        //                     amount: {
+        //                         denom: "stake",
+        //                         amount: 2
+        //                     }
+        //                 }
+        //             }
+        //         ]
+        //     };
+        //     common.verifyTx(url,tx,privateKey,chainName,verify);
+        // });
+        
+        it('test addLiquidity', function () {
             let tx = {
                 chain_id: chain_id,
-                from: from,
                 account_number: account_number,
-                sequence: 57,
-                fees: fees,
-                gas: gas,
+                sequence: 11,
+                fee: fee,
                 memo: memo,
-                type: Irisnet.config.iris.tx.transfer.type,
-                mode: Irisnet.config.iris.mode.try,
-                msg: {
-                    to: "faa1s6v9qgu8ye7d884s8kpye64x66znndg8t6eztj",
-                    coins: [
-                        {
-                            denom: "iris-atto",
-                            amount: 10000000000000000000
+                publicKey:pubKey,
+                msgs: [
+                    {
+                        type:'add_liquidity',
+                        value:{
+                            max_token:{
+                                denom: "uiris",
+                                amount: 2
+                            },
+                            exact_standard_amt:'100',
+                            min_liquidity:'100',
+                            deadline:new Date().getTime(),
+                            sender:from
                         }
-                    ]
-                }
+                    }
+                ]
             };
-
-            simulate(tx);
+            common.verifyTxRpc(rpcUrl, tx, privateKey, chainName, rpcTxVerify);
         });
 
-        it('test transfer', function () {
+        it('test removeLiquidity', function () {
             let tx = {
                 chain_id: chain_id,
-                from: from,
-                account_number: account_number,
-                sequence: 3,
-                fees: fees,
-                gas: gas,
-                memo: memo,
-                type: Irisnet.config.iris.tx.transfer.type,
-                msg: {
-                    to: "faa1s6v9qgu8ye7d884s8kpye64x66znndg8t6eztj",
-                    coins: [
-                        {
-                            denom: "iris-atto",
-                            amount: 10000000000000000000
-                        }
-                    ]
-                }
-            };
-
-            common.verifyTx(url,tx,privateKey,chainName,verify);
-        });
-
-        it('test delegate', function () {
-            let tx = {
-                chain_id: chain_id,
-                from: from,
                 account_number: account_number,
                 sequence: 12,
-                fees: fees,
-                gas: gas,
+                fee: fee,
                 memo: memo,
-                type: Irisnet.config.iris.tx.delegate.type,
-                msg: {
-                    validator_addr: "fva1aake3umjllpd9es5d3qmry4egcne0f8ajd7vdp",
-                    delegation: {
-                        denom: "iris-atto",
-                        amount: 1000000000000000000000000
+                msgs: [
+                    {
+                        type:Irisnet.config.iris.tx.removeLiquidity.type,
+                        value:{
+                            withdraw_liquidity:{
+                                denom: "uni:stake",
+                                amount: 2
+                            },
+                            min_token:'100',
+                            min_standard_amt:'100',
+                            deadline:new Date().getTime(),
+                            sender:from
+                        }
                     }
-                }
+                ]
             };
-
-            common.verifyTx(url,tx,privateKey,chainName,verify);
+            common.verifyTxRpc(rpcUrl, tx, privateKey, chainName, rpcTxVerify);
         });
 
-        it('test BeginUnbonding', function () {
+        it('test swapOrder', function () {
             let tx = {
                 chain_id: chain_id,
-                from: from,
                 account_number: account_number,
-                sequence: 43,
-                fees: fees,
-                gas: gas,
+                sequence: 13,
+                fee: fee,
                 memo: memo,
-                type: Irisnet.config.iris.tx.undelegate.type,
-                msg: {
-                    validator_addr: "fva1aake3umjllpd9es5d3qmry4egcne0f8ajd7vdp",
-                    shares_amount: "1000000000000000000000000"
-                }
+                msgs: [
+                    {
+                        type:Irisnet.config.iris.tx.swapOrder.type,
+                        value:{
+                            input : {
+                                address:from,
+                                coin:{
+                                    denom: "stake",
+                                    amount: "10"
+                                },
+                            },
+                            output : {
+                                address:from,
+                                coin:{
+                                    denom: "uiris",
+                                    amount: "1"
+                                },
+                            },
+                            deadline:new Date().getTime(),
+                            isBuyOrder:true
+                        }
+                    }
+                ]
             };
-
-            common.verifyTx(url,tx,privateKey,chainName,verify);
+            common.verifyTxRpc(rpcUrl, tx, privateKey, chainName, rpcTxVerify);
         });
 
-        it('test BeginRedelegate', function () {
-            let tx = {
-                chain_id: chain_id,
-                from: from,
-                account_number: account_number,
-                sequence: 22,
-                fees: fees,
-                gas: gas,
-                memo: memo,
-                type: Irisnet.config.iris.tx.redelegate.type,
-                msg: {
-                    validator_src_addr: "fva1kca5vw7r2k72d5zy0demszmrhdz4dp8t4uat0c",
-                    validator_dst_addr: "fva1rz7jxmgsgyjwa6erusxlzrmg2aw3cvyf3c3x6v",
-                    shares_amount: "1000000000000000000000000"
-                }
-            };
+        // it('test BeginUnbonding', function () {
+        //     let tx = {
+        //         chain_id: chain_id,
+        //         from: from,
+        //         account_number: account_number,
+        //         sequence: 43,
+        //         fees: fees,
+        //         gas: gas,
+        //         memo: memo,
+        //         type: Irisnet.config.iris.tx.undelegate.type,
+        //         msg: {
+        //             validator_addr: "fva1aake3umjllpd9es5d3qmry4egcne0f8ajd7vdp",
+        //             shares_amount: "1000000000000000000000000"
+        //         }
+        //     };
 
-            common.verifyTx(url,tx,privateKey,chainName,verify);
-        });
+        //     common.verifyTx(url,tx,privateKey,chainName,verify);
+        // });
+
+        // it('test BeginRedelegate', function () {
+        //     let tx = {
+        //         chain_id: chain_id,
+        //         from: from,
+        //         account_number: account_number,
+        //         sequence: 22,
+        //         fees: fees,
+        //         gas: gas,
+        //         memo: memo,
+        //         type: Irisnet.config.iris.tx.redelegate.type,
+        //         msg: {
+        //             validator_src_addr: "fva1kca5vw7r2k72d5zy0demszmrhdz4dp8t4uat0c",
+        //             validator_dst_addr: "fva1rz7jxmgsgyjwa6erusxlzrmg2aw3cvyf3c3x6v",
+        //             shares_amount: "1000000000000000000000000"
+        //         }
+        //     };
+
+        //     common.verifyTx(url,tx,privateKey,chainName,verify);
+        // });
 
 
-        it('test MsgWithdrawDelegatorRewardsAll', function () {
-            let tx = {
-                chain_id: chain_id,
-                from: from,
-                account_number: account_number,
-                sequence: 55,
-                fees: fees,
-                gas: gas,
-                memo: memo,
-                type: Irisnet.config.iris.tx.withdrawDelegationRewardsAll.type,
-                //mode: Irisnet.config.iris.mode.try
-            };
+        // it('test MsgWithdrawDelegatorRewardsAll', function () {
+        //     let tx = {
+        //         chain_id: chain_id,
+        //         from: from,
+        //         account_number: account_number,
+        //         sequence: 55,
+        //         fees: fees,
+        //         gas: gas,
+        //         memo: memo,
+        //         type: Irisnet.config.iris.tx.withdrawDelegationRewardsAll.type,
+        //         //mode: Irisnet.config.iris.mode.try
+        //     };
 
-            common.verifyTx(url,tx,privateKey,chainName,verify);
-        });
+        //     common.verifyTx(url,tx,privateKey,chainName,verify);
+        // });
 
-        it('test MsgWithdrawDelegatorReward', function () {
-            let tx = {
-                chain_id: chain_id,
-                from: from,
-                account_number: account_number,
-                sequence: 42,
-                fees: fees,
-                gas: gas,
-                memo: memo,
-                type: Irisnet.config.iris.tx.withdrawDelegationReward.type,
-                msg: {
-                    validator_addr: "fva1aake3umjllpd9es5d3qmry4egcne0f8ajd7vdp",
-                }
-            };
+        // it('test MsgWithdrawDelegatorReward', function () {
+        //     let tx = {
+        //         chain_id: chain_id,
+        //         from: from,
+        //         account_number: account_number,
+        //         sequence: 42,
+        //         fees: fees,
+        //         gas: gas,
+        //         memo: memo,
+        //         type: Irisnet.config.iris.tx.withdrawDelegationReward.type,
+        //         msg: {
+        //             validator_addr: "fva1aake3umjllpd9es5d3qmry4egcne0f8ajd7vdp",
+        //         }
+        //     };
 
-            common.verifyTx(url,tx,privateKey,chainName,verify);
-        });
+        //     common.verifyTx(url,tx,privateKey,chainName,verify);
+        // });
     });
 
     //测试冷钱包相关交易
-    describe('test cold wallet tx ', function () {
-        it('test transfer', function () {
-            let tx = {
-                chain_id: chain_id,
-                from: from,
-                account_number: account_number,
-                sequence: 21,
-                fees: fees,
-                gas: gas,
-                memo: memo,
-                type: Irisnet.config.iris.tx.transfer.type,
-                msg: {
-                    to: "faa1s6v9qgu8ye7d884s8kpye64x66znndg8t6eztj",
-                    coins: [
-                        {
-                            denom: "iris-atto",
-                            amount: 10000000000000000000
-                        }
-                    ]
-                }
-            };
+    // describe('test cold wallet tx ', function () {
+    //     it('test transfer', function () {
+    //         let tx = {
+    //             chain_id: chain_id,
+    //             from: from,
+    //             account_number: account_number,
+    //             sequence: 21,
+    //             fees: fees,
+    //             gas: gas,
+    //             memo: memo,
+    //             type: Irisnet.config.iris.tx.transfer.type,
+    //             msg: {
+    //                 to: "faa1s6v9qgu8ye7d884s8kpye64x66znndg8t6eztj",
+    //                 coins: [
+    //                     {
+    //                         denom: "iris-atto",
+    //                         amount: 10000000000000000000
+    //                     }
+    //                 ]
+    //             }
+    //         };
 
-            extracted(tx);
-        });
+    //         extracted(tx);
+    //     });
 
 
-        it('test delegate', function () {
-            let tx = {
-                chain_id: chain_id,
-                from: from,
-                account_number: account_number,
-                sequence: 55,
-                fees: fees,
-                gas: gas,
-                memo: memo,
-                type: Irisnet.config.iris.tx.delegate.type,
-                msg: {
-                    validator_addr: "fva1kca5vw7r2k72d5zy0demszmrhdz4dp8t4uat0c",
-                    delegation: {
-                        denom: "iris-atto",
-                        amount: 10000000000000000000
-                    }
-                }
-            };
+    //     it('test delegate', function () {
+    //         let tx = {
+    //             chain_id: chain_id,
+    //             from: from,
+    //             account_number: account_number,
+    //             sequence: 55,
+    //             fees: fees,
+    //             gas: gas,
+    //             memo: memo,
+    //             type: Irisnet.config.iris.tx.delegate.type,
+    //             msg: {
+    //                 validator_addr: "fva1kca5vw7r2k72d5zy0demszmrhdz4dp8t4uat0c",
+    //                 delegation: {
+    //                     denom: "iris-atto",
+    //                     amount: 10000000000000000000
+    //                 }
+    //             }
+    //         };
 
-            extracted(tx);
-        });
+    //         extracted(tx);
+    //     });
 
-        it('test BeginUnbonding', function () {
-            let tx = {
-                chain_id: chain_id,
-                from: from,
-                account_number: account_number,
-                sequence: 45,
-                fees: fees,
-                gas: gas,
-                memo: memo,
-                type: Irisnet.config.iris.tx.undelegate.type,
-                msg: {
-                    validator_addr: "fva16h3uazd2wknrae7ql0dqpjw69s5kp44slme6hr",
-                    shares_amount: "10000000000000000000"
-                }
-            };
+    //     it('test BeginUnbonding', function () {
+    //         let tx = {
+    //             chain_id: chain_id,
+    //             from: from,
+    //             account_number: account_number,
+    //             sequence: 45,
+    //             fees: fees,
+    //             gas: gas,
+    //             memo: memo,
+    //             type: Irisnet.config.iris.tx.undelegate.type,
+    //             msg: {
+    //                 validator_addr: "fva16h3uazd2wknrae7ql0dqpjw69s5kp44slme6hr",
+    //                 shares_amount: "10000000000000000000"
+    //             }
+    //         };
 
-            extracted(tx);
-        });
+    //         extracted(tx);
+    //     });
 
-        it('test BeginRedelegate', function () {
-            let tx = {
-                chain_id: chain_id,
-                from: from,
-                account_number: account_number,
-                sequence: 20,
-                fees: fees,
-                gas: gas,
-                memo: memo,
-                type: Irisnet.config.iris.tx.redelegate.type,
-                msg: {
-                    validator_src_addr: "fva1cr6xfpp078nm7yfsh36850ftu20fl3c9duchrk",
-                    validator_dst_addr: "fva1xde0yh9vmc8mnkdvdr5krllfe3gslw9d4qp2wd",
-                    shares_amount: "10000000000000000000"
-                }
-            };
+    //     it('test BeginRedelegate', function () {
+    //         let tx = {
+    //             chain_id: chain_id,
+    //             from: from,
+    //             account_number: account_number,
+    //             sequence: 20,
+    //             fees: fees,
+    //             gas: gas,
+    //             memo: memo,
+    //             type: Irisnet.config.iris.tx.redelegate.type,
+    //             msg: {
+    //                 validator_src_addr: "fva1cr6xfpp078nm7yfsh36850ftu20fl3c9duchrk",
+    //                 validator_dst_addr: "fva1xde0yh9vmc8mnkdvdr5krllfe3gslw9d4qp2wd",
+    //                 shares_amount: "10000000000000000000"
+    //             }
+    //         };
 
-            extracted(tx);
-        });
+    //         extracted(tx);
+    //     });
 
-        it('test MsgWithdrawDelegatorRewardsAll', function () {
-            let tx = {
-                chain_id: chain_id,
-                from: from,
-                account_number: account_number,
-                sequence: 46,
-                fees: fees,
-                gas: gas,
-                memo: memo,
-                type: Irisnet.config.iris.tx.withdrawDelegationRewardsAll.type,
-            };
+    //     it('test MsgWithdrawDelegatorRewardsAll', function () {
+    //         let tx = {
+    //             chain_id: chain_id,
+    //             from: from,
+    //             account_number: account_number,
+    //             sequence: 46,
+    //             fees: fees,
+    //             gas: gas,
+    //             memo: memo,
+    //             type: Irisnet.config.iris.tx.withdrawDelegationRewardsAll.type,
+    //         };
 
-            extracted(tx);
-        });
+    //         extracted(tx);
+    //     });
 
-        it('test MsgWithdrawDelegatorReward', function () {
-            let tx = {
-                chain_id: chain_id,
-                from: from,
-                account_number: account_number,
-                sequence: 26,
-                fees: fees,
-                gas: gas,
-                memo: memo,
-                type: Irisnet.config.iris.tx.withdrawDelegationReward.type,
-                msg: {
-                    validator_addr: "fva1xde0yh9vmc8mnkdvdr5krllfe3gslw9d4qp2wd",
-                }
-            };
+    //     it('test MsgWithdrawDelegatorReward', function () {
+    //         let tx = {
+    //             chain_id: chain_id,
+    //             from: from,
+    //             account_number: account_number,
+    //             sequence: 26,
+    //             fees: fees,
+    //             gas: gas,
+    //             memo: memo,
+    //             type: Irisnet.config.iris.tx.withdrawDelegationReward.type,
+    //             msg: {
+    //                 validator_addr: "fva1xde0yh9vmc8mnkdvdr5krllfe3gslw9d4qp2wd",
+    //             }
+    //         };
 
-            extracted(tx);
-        });
+    //         extracted(tx);
+    //     });
 
-        it('test MsgSwapOrder', function () {
-            let tx = {
-                chain_id: chain_id,
-                from: from,
-                account_number: account_number,
-                sequence: 34,
-                fees: fees,
-                gas: gas,
-                memo: memo,
-                type: Irisnet.config.iris.tx.swapOrder.type,
-                msg: {
-                    input : {
-                        address:from,
-                        coin:{
-                            denom: "iris-atto",
-                            amount: "10000000000000000000000000000000"
-                        },
-                    },
-                    output : {
-                        address:from,
-                        coin:{
-                            denom: "btc-min",
-                            amount: "1"
-                        },
-                    },
-                    deadline:1565777966877,
-                    isBuyOrder:true
-                }
-            };
-            extracted(tx);
-        });
+    //     it('test MsgSwapOrder', function () {
+    //         let tx = {
+    //             chain_id: chain_id,
+    //             from: from,
+    //             account_number: account_number,
+    //             sequence: 34,
+    //             fees: fees,
+    //             gas: gas,
+    //             memo: memo,
+    //             type: Irisnet.config.iris.tx.swapOrder.type,
+    //             msg: {
+    //                 input : {
+    //                     address:from,
+    //                     coin:{
+    //                         denom: "iris-atto",
+    //                         amount: "10000000000000000000000000000000"
+    //                     },
+    //                 },
+    //                 output : {
+    //                     address:from,
+    //                     coin:{
+    //                         denom: "btc-min",
+    //                         amount: "1"
+    //                     },
+    //                 },
+    //                 deadline:1565777966877,
+    //                 isBuyOrder:true
+    //             }
+    //         };
+    //         extracted(tx);
+    //     });
 
-        it('test MsgAddLiquidity', function () {
-            let tx = {
-                chain_id: chain_id,
-                from: from,
-                account_number: account_number,
-                sequence: 29,
-                fees: fees,
-                gas: gas,
-                memo: memo,
-                type: Irisnet.config.iris.tx.addLiquidity.type,
-                msg: {
-                    max_token : {
-                        denom: "btc-min",
-                        amount: "10"
-                    },
-                    exact_iris_amt: "10000000000000000000000",
-                    min_liquidity: "100000000000000000",
-                    deadline:new Date().getTime()
-                }
-            };
-            extracted(tx);
-        });
+    //     it('test MsgAddLiquidity', function () {
+    //         let tx = {
+    //             chain_id: chain_id,
+    //             from: from,
+    //             account_number: account_number,
+    //             sequence: 29,
+    //             fees: fees,
+    //             gas: gas,
+    //             memo: memo,
+    //             type: Irisnet.config.iris.tx.addLiquidity.type,
+    //             msg: {
+    //                 max_token : {
+    //                     denom: "btc-min",
+    //                     amount: "10"
+    //                 },
+    //                 exact_iris_amt: "10000000000000000000000",
+    //                 min_liquidity: "100000000000000000",
+    //                 deadline:new Date().getTime()
+    //             }
+    //         };
+    //         extracted(tx);
+    //     });
 
-        it('test MsgRemoveLiquidity', function () {
-            let tx = {
-                chain_id: chain_id,
-                from: from,
-                account_number: account_number,
-                sequence: 30,
-                fees: fees,
-                gas: gas,
-                memo: memo,
-                type: Irisnet.config.iris.tx.removeLiquidity.type,
-                msg: {
-                    withdraw_liquidity : {
-                        denom: "u-btc-min",
-                        amount: "10000000000000000000000"
-                    },
-                    min_iris_amt: "10000000000000000",
-                    min_token: "1",
-                    deadline:new Date().getTime()
-                }
-            };
-            extracted(tx);
-        });
-    });
+    //     it('test MsgRemoveLiquidity', function () {
+    //         let tx = {
+    //             chain_id: chain_id,
+    //             from: from,
+    //             account_number: account_number,
+    //             sequence: 30,
+    //             fees: fees,
+    //             gas: gas,
+    //             memo: memo,
+    //             type: Irisnet.config.iris.tx.removeLiquidity.type,
+    //             msg: {
+    //                 withdraw_liquidity : {
+    //                     denom: "u-btc-min",
+    //                     amount: "10000000000000000000000"
+    //                 },
+    //                 min_iris_amt: "10000000000000000",
+    //                 min_token: "1",
+    //                 deadline:new Date().getTime()
+    //             }
+    //         };
+    //         extracted(tx);
+    //     });
+    // });
 
     //冷钱包调用
     function extracted(tx, chain = 'iris') {
@@ -410,6 +502,10 @@ describe('iris transaction', function () {
         console.log("hash", result.hash);
     }
 });
+
+function rpcTxVerify(data) {
+    console.log(data);
+}
 
 function verify(act,exp,data) {
     assert.notExists(act.check_tx.code,`tx commit failed,${act.check_tx.log}`);

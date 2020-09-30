@@ -3,39 +3,36 @@
     "tx": {
       "transfer": {
         "type": "transfer",
-        "prefix": "irishub/bank/Send"
+        "prefix": "cosmos.bank.v1beta1.MsgSend"
       },
       "delegate": {
         "type": "delegate",
-        "prefix": "irishub/stake/MsgDelegate"
+        "prefix": "cosmos.staking.v1beta1.MsgDelegate"
       },
       "undelegate": {
         "type": "begin_unbonding",
-        "prefix": "irishub/stake/BeginUnbonding"
+        "prefix": "cosmos.staking.v1beta1.MsgUndelegate"
       },
       "redelegate": {
         "type": "redelegate",
-        "prefix": "irishub/stake/BeginRedelegate"
-      },
-      "withdrawDelegationRewardsAll": {
-        "type": "withdraw_delegation_rewards_all",
-        "prefix": "irishub/distr/MsgWithdrawDelegationRewardsAll"
+        "prefix": "cosmos.staking.v1beta1.MsgBeginRedelegate"
       },
       "withdrawDelegationReward": {
         "type": "withdraw_delegation_reward",
-        "prefix": "irishub/distr/MsgWithdrawDelegationReward"
+        "prefix": "cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"
       },
       "addLiquidity": {
         "type": "add_liquidity",
-        "prefix": "irishub/coinswap/MsgAddLiquidity"
+        "prefix": "irismod.coinswap.MsgAddLiquidity"
       },
       "removeLiquidity": {
         "type": "remove_liquidity",
-        "prefix": "irishub/coinswap/MsgRemoveLiquidity"
+        "prefix": "irismod.coinswap.MsgRemoveLiquidity"
       },
       "swapOrder": {
         "type": "swap_order",
-        "prefix": "irishub/coinswap/MsgSwapOrder"
+        "prefix": "irismod.coinswap.MsgSwapOrder"
+
       },
       "stdTx": {
         "type": "",

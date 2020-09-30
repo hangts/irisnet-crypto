@@ -2,7 +2,8 @@
 
 const Config = require('../config');
 const Utils = require('./util/utils');
-
+const TxHelper = require('./util/txHelper');
+const TxModelCreator = require('./util/txModelCreator');
 class Builder {
 
     /**
@@ -55,9 +56,9 @@ class Builder {
             case Config.chain.iris: {
                 return require('./chains/iris/builder')();
             }
-            case Config.chain.ethermint: {
-                return require('./chains/ethermint/ethermint_builder')();
-            }
+            // case Config.chain.ethermint: {
+            //     return require('./chains/ethermint/ethermint_builder')();
+            // }
             case Config.chain.cosmos: {
                 return require('./chains/cosmos/builder')();
             }
@@ -75,28 +76,24 @@ class Builder {
      */
     buildParam(tx){
         let convert = function (tx) {
-            let fees = [];
-            if (!Utils.isEmpty(tx.fees)){
-                fees.push({
-                    "denom":tx.fees.denom,
-                    "amount":Utils.toString(tx.fees.amount),
-                });
-            }
             let memo = tx.memo ? tx.memo : '';
-            return new Request(tx.chain_id,tx.from,tx.account_number,tx.sequence,fees,tx.gas,memo,tx.type,tx.msg);
+            return new Request(
+                tx.chain_id,
+                tx.account_number,
+                tx.sequence,
+                tx.fee, memo,
+                tx.msgs,
+                tx.publicKey
+            );
         };
-
         return convert(tx);
     }
 }
 
 class Request {
-    constructor(chain_id, from, account_number,sequence, fees,gas,memo,type,msg) {
+    constructor(chain_id, account_number, sequence, fee, memo, msgs, publicKey) {
         if (Utils.isEmpty(chain_id)) {
             throw new Error("chain_id is empty");
-        }
-        if (Utils.isEmpty(from)) {
-            throw new Error("from is empty");
         }
         if (account_number < 0) {
             throw new Error("account_number is empty");
@@ -104,22 +101,22 @@ class Request {
         if (sequence < 0) {
             throw new Error("sequence is empty");
         }
-        if (Utils.isEmpty(fees)) {
-            throw new Error("fees is empty");
+        if (Utils.isEmpty(fee)) {
+            throw new Error("fee is empty");
         }
-        if (Utils.isEmpty(type)) {
-            throw new Error("type is empty");
+        if (!msgs || msgs.length < 1) {
+            throw new Error("msgs is empty");
         }
 
         this.chain_id = chain_id;
-        this.from = from;
         this.account_number = account_number;
         this.sequence = sequence;
-        this.fees = fees;
-        this.gas = gas;
+        this.fee = fee;
+        // this.gas = gas;
         this.memo = memo;
-        this.type = type;
-        this.msg = msg
+        // this.type = type;
+        this.msgs = msgs;
+        this.publicKey = publicKey;
     }
 }
 
@@ -139,22 +136,40 @@ class Validator{
  */
 
 class Msg extends Validator{
-    GetSignBytes() {
-        throw new Error("not implement");
-    }
-
-    Type() {
-        throw new Error("not implement");
-    }
     constructor(type) {
         super();
         this.type = type
     }
+
+    getModelClass(){
+        throw new Error("not implement");
+    }
+
+    getModel(){
+        throw new Error("not implement");
+    }
+
+    pack(){
+        let msg = this.getModel();
+        return TxModelCreator.createAnyModel(this.type, msg.serializeBinary());
+    }
+
+    unpack(msg_any){
+        if (!TxHelper.isAny(msg_any)) {
+            throw new Error("msg_any is not instanceof protobuf.Any");
+        }
+        return this.getModelClass().deserializeBinary(msg_any.getValue());
+    }
+
     GetMsg(){
         throw new Error("not implement");
     }
 
     GetDisplayContent(){
+        throw new Error("not implement");
+    }
+
+    ValidateBasic(){
         throw new Error("not implement");
     }
 }

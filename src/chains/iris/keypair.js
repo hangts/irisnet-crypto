@@ -20,16 +20,21 @@ class IrisKeypair {
         return derivedPriv;
     }
 
-    static sign(private_key, msg) {
-        //将签名字符串使用Sha256构造32位byte数组
-        let sigByte = Buffer.from(JSON.stringify(msg));
-        let sig32 = Buffer.from(Sha256(sigByte,{ asBytes: true }));
+    static sign(private_key, signDoc) {
+        // //将签名字符串使用Sha256构造32位byte数组
+        // let sigByte = Buffer.from(JSON.stringify(msg));
+        // let sig32 = Buffer.from(Sha256(sigByte,{ asBytes: true }));
 
-        //对数据签名
-        let prikeyArr = Buffer.from(new Uint8Array(Codec.Hex.hexToBytes(private_key)));
-        let sig = Secp256k1.sign(sig32,prikeyArr);
-        //let signature = Buffer.from(Hd.Serialize(sig.signature));
-        return Array.from(sig.signature)
+        // //对数据签名
+        // let prikeyArr = Buffer.from(new Uint8Array(Codec.Hex.hexToBytes(private_key)));
+        // let sig = Secp256k1.sign(sig32,prikeyArr);
+        // //let signature = Buffer.from(Hd.Serialize(sig.signature));
+        // return Array.from(sig.signature)
+
+        let hash = Buffer.from(Sha256(signDoc.serializeBinary(),{ asBytes: true }));
+        let prikeyArr = Buffer.from(private_key,'hex');
+        let sig = Secp256k1.sign(hash, prikeyArr);
+        return sig.signature.toString('base64');
     }
 
     static getAddress(publicKey) {
