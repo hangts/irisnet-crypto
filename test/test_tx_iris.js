@@ -76,41 +76,90 @@ describe('iris transaction', function () {
         //     common.verifyTx(url,tx,privateKey,chainName,verify);
         // });
 
-        // it('test delegate', function () {
-        //     let tx = {
-        //         chain_id: chain_id,
-        //         account_number: account_number,
-        //         sequence: 9,
-        //         fee: fee,
-        //         memo: memo,
-        //         msgs: [
-        //             {
-        //                 type:Irisnet.config.iris.tx.delegate.type,
-        //                 value:{
-        //                     delegatorAddress:from,
-        //                     validatorAddress: "iva1jawm6yadku5ura9lrtjstpe30kh6vl6uhhypuv",
-        //                     amount: {
-        //                         denom: "stake",
-        //                         amount: 2
-        //                     }
-        //                 }
-        //             }
-        //         ]
-        //     };
-        //     common.verifyTx(url,tx,privateKey,chainName,verify);
-        // });
-        
-        it('test addLiquidity', function () {
+        it('test delegate', function () {
             let tx = {
                 chain_id: chain_id,
                 account_number: account_number,
-                sequence: 11,
+                sequence: 10,
+                fee: fee,
+                memo: memo,
+                msgs: [
+                    {
+                        type:Irisnet.config.iris.tx.delegate.type,
+                        value:{
+                            delegatorAddress:from,
+                            validatorAddress: "iva1jawm6yadku5ura9lrtjstpe30kh6vl6uhhypuv",
+                            amount: {
+                                denom: "stake",
+                                amount: 3
+                            }
+                        }
+                    }
+                ]
+            };
+            common.verifyTxRpc(rpcUrl, tx, privateKey, chainName, rpcTxVerify);
+        });
+
+        it('test BeginUnbonding', function () {
+            let tx = {
+                chain_id: chain_id,
+                account_number: account_number,
+                sequence: 15,
+                fee: fee,
+                memo: memo,
+                msgs:[
+                    {
+                        type:Irisnet.config.iris.tx.undelegate.type,
+                        value:{
+                            delegator_address:from,
+                            validator_address: "iva1jawm6yadku5ura9lrtjstpe30kh6vl6uhhypuv",
+                            amount: {
+                                denom: "stake",
+                                amount: 3
+                            }
+                        }
+                    }
+                ] 
+            };
+            common.verifyTxRpc(rpcUrl, tx, privateKey, chainName, rpcTxVerify);
+        });
+
+        it('test BeginRedelegate', function () {
+            let tx = {
+                chain_id: chain_id,
+                account_number: account_number,
+                sequence: 16,
+                fee: fee,
+                memo: memo,
+                msgs: [
+                    {
+                        type:Irisnet.config.iris.tx.redelegate.type,
+                        value:{
+                            delegator_address:from,
+                            validator_src_address: "iva1jawm6yadku5ura9lrtjstpe30kh6vl6uhhypuv",
+                            validator_dst_address: "iva1jawm6yadku5ura9lrtjstpe30kh6vl6uhhypuv",
+                            amount: {
+                                denom: "stake",
+                                amount: 3
+                            }
+                        }
+                    }
+                ]
+            };
+            common.verifyTxRpc(rpcUrl, tx, privateKey, chainName, rpcTxVerify);
+        });
+
+        it('test addLiquidity', function (){
+            let tx = {
+                chain_id: chain_id,
+                account_number: account_number,
+                sequence: 14,
                 fee: fee,
                 memo: memo,
                 publicKey:pubKey,
                 msgs: [
                     {
-                        type:'add_liquidity',
+                        type:Irisnet.config.iris.tx.addLiquidity.type,
                         value:{
                             max_token:{
                                 denom: "uiris",
@@ -186,46 +235,6 @@ describe('iris transaction', function () {
             };
             common.verifyTxRpc(rpcUrl, tx, privateKey, chainName, rpcTxVerify);
         });
-
-        // it('test BeginUnbonding', function () {
-        //     let tx = {
-        //         chain_id: chain_id,
-        //         from: from,
-        //         account_number: account_number,
-        //         sequence: 43,
-        //         fees: fees,
-        //         gas: gas,
-        //         memo: memo,
-        //         type: Irisnet.config.iris.tx.undelegate.type,
-        //         msg: {
-        //             validator_addr: "fva1aake3umjllpd9es5d3qmry4egcne0f8ajd7vdp",
-        //             shares_amount: "1000000000000000000000000"
-        //         }
-        //     };
-
-        //     common.verifyTx(url,tx,privateKey,chainName,verify);
-        // });
-
-        // it('test BeginRedelegate', function () {
-        //     let tx = {
-        //         chain_id: chain_id,
-        //         from: from,
-        //         account_number: account_number,
-        //         sequence: 22,
-        //         fees: fees,
-        //         gas: gas,
-        //         memo: memo,
-        //         type: Irisnet.config.iris.tx.redelegate.type,
-        //         msg: {
-        //             validator_src_addr: "fva1kca5vw7r2k72d5zy0demszmrhdz4dp8t4uat0c",
-        //             validator_dst_addr: "fva1rz7jxmgsgyjwa6erusxlzrmg2aw3cvyf3c3x6v",
-        //             shares_amount: "1000000000000000000000000"
-        //         }
-        //     };
-
-        //     common.verifyTx(url,tx,privateKey,chainName,verify);
-        // });
-
 
         // it('test MsgWithdrawDelegatorRewardsAll', function () {
         //     let tx = {

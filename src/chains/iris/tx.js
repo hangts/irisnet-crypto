@@ -8,10 +8,11 @@ const TxModelCreator = require('../../util/txModelCreator');
 
 module.exports = class StdTx {
     constructor(properties) {
+        let {msgs, memo, fee, sequence, account_number, chain_id, publicKey} = properties;
         this.txData = properties;
 
-        this.body = TxModelCreator.createBodyModel(properties.msgs, properties.memo, 0);
-        this.authInfo = TxModelCreator.createAuthInfoModel(properties.fee, properties.sequence, properties.publicKey);
+        this.body = TxModelCreator.createBodyModel(msgs, memo, 0);
+        this.authInfo = TxModelCreator.createAuthInfoModel(fee, sequence, publicKey);
         this.signatures = [];
     }
 

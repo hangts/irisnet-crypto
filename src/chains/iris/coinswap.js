@@ -1,8 +1,6 @@
 const Builder = require("../../builder");
 const Config = require('../../../config');
-const Amino = require('../base');
-const Root = require('./tx/tx');
-const BECH32 = require('bech32');
+const Bech32 = require('bech32');
 const Utils = require('../../util/utils');
 
 const Coinswap_pb = require('../../types/cosmos/coinswap/coinswap_pb');
@@ -56,8 +54,8 @@ class MsgSwapOrder extends Builder.Msg{
     }
 
     GetMsg() {
-        // let sender = BECH32.fromWords(this.input.address);
-        // let receiver = BECH32.fromWords(this.output.address);
+        // let sender = Bech32.fromWords(this.input.address);
+        // let receiver = Bech32.fromWords(this.output.address);
         // let input = {
         //     address: sender,
         //     coin: this.input.coin
@@ -75,8 +73,8 @@ class MsgSwapOrder extends Builder.Msg{
     };
 
     GetDisplayContent() {
-        // let sender = BECH32.encode(Config.iris.bech32.accAddr, this.input.address);
-        // let receiver = BECH32.encode(Config.iris.bech32.accAddr, this.output.address);
+        // let sender = Bech32.encode(Config.iris.bech32.accAddr, this.input.address);
+        // let receiver = Bech32.encode(Config.iris.bech32.accAddr, this.output.address);
         // return {
         //     i18n_tx_type: "i18n_swap_order",
         //     i18n_input: {
@@ -136,7 +134,7 @@ class MsgAddLiquidity extends Builder.Msg{
     }
 
     GetMsg() {
-        // let sender = BECH32.fromWords(this.sender);
+        // let sender = Bech32.fromWords(this.sender);
         // return {
         //         maxToken: this.maxToken,
         //         exactIrisAmt: this.exactIrisAmt,
@@ -147,7 +145,7 @@ class MsgAddLiquidity extends Builder.Msg{
     };
 
     GetDisplayContent() {
-        // let sender = BECH32.encode(Config.iris.bech32.accAddr, this.sender);
+        // let sender = Bech32.encode(Config.iris.bech32.accAddr, this.sender);
         // return {
         //     i18n_tx_type: "i18n_add_liquidity",
         //     i18n_max_token: this.maxToken,
@@ -159,7 +157,6 @@ class MsgAddLiquidity extends Builder.Msg{
     };
 }
 
-/////////////
 class MsgRemoveLiquidity extends Builder.Msg{
     constructor(withdraw_liquidity, min_token, min_standard_amt, deadline, sender){
         super(Config.iris.tx.removeLiquidity.prefix);
@@ -203,7 +200,7 @@ class MsgRemoveLiquidity extends Builder.Msg{
     }
 
     GetMsg() {
-        // let sender = BECH32.fromWords(this.sender);
+        // let sender = Bech32.fromWords(this.sender);
         // return {
         //     minToken: this.minToken,
         //     withdrawLiquidity: this.withdrawLiquidity,
@@ -214,7 +211,7 @@ class MsgRemoveLiquidity extends Builder.Msg{
     };
 
     GetDisplayContent() {
-        // let sender = BECH32.encode(Config.iris.bech32.accAddr, this.sender);
+        // let sender = Bech32.encode(Config.iris.bech32.accAddr, this.sender);
         // return {
         //     i18n_tx_type: "i18n_remove_liquidity",
         //     i18n_min_token: this.minToken,
