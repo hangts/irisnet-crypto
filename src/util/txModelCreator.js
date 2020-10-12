@@ -6,7 +6,8 @@ let TxHelper = require('./txHelper');
 
 let Tx_pb = require('../types/cosmos/tx/v1beta1/tx_pb');
 let Signing_pb = require('../types/cosmos/tx/signing/v1beta1/signing_pb');
-let Crypto_pb = require('../types/cosmos/base/crypto/v1beta1/crypto_pb');
+// let Crypto_pb = require('../types/cosmos/base/crypto/v1beta1/crypto_pb');
+let secp256k1_key_pb = require('../types/cosmos/crypto/secp256k1/keys_pb.js');
 let Coin_pb = require('../types/cosmos/base/v1beta1/coin_pb');
 let Any_pb = require('../types/google/protobuf/any_pb');
 
@@ -48,7 +49,7 @@ class TxModelCreator {
         
         if (publicKey) {
             let pk = TxModelCreator.createPublicKeyModel(publicKey);
-            signerInfo.setPublicKey(pk);
+            signerInfo.setPublicKey(TxModelCreator.createAnyModel('cosmos.crypto.secp256k1.PubKey',pk.serializeBinary()));
         }
         return signerInfo;
     }
@@ -61,8 +62,8 @@ class TxModelCreator {
             pubByteArray = pubByteArray.slice(5)
         }
         
-        let pk = new Crypto_pb.PublicKey();
-        pk.setSecp256k1(Buffer.from(pubByteArray));
+        let pk = new secp256k1_key_pb.PubKey();
+        pk.setKey(Buffer.from(pubByteArray));
         return pk;
     }
 

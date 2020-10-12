@@ -28,6 +28,10 @@ class IrisBuilder extends Builder {
                 msg = Bank.CreateMsgSend(message.value);
                 break;
             }
+            case Config.iris.tx.multiSend.type: {
+                msg = Bank.CreateMsgMultiSend(message.value);
+                break;
+            }
             case Config.iris.tx.delegate.type: {
                 msg = Stake.CreateMsgDelegate(message.value);
                 break;
@@ -100,7 +104,6 @@ class IrisBuilder extends Builder {
             let keypair = IrisKeypair.import(privateKey);
             stdTx.setPubKey(keypair.publicKey);
         }
-
         let sign = IrisKeypair.sign(privateKey, stdTx.getSignDoc());
         stdTx.addSignature(sign);
         return stdTx;

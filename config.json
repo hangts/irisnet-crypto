@@ -5,6 +5,10 @@
         "type": "transfer",
         "prefix": "cosmos.bank.v1beta1.MsgSend"
       },
+      "multiSend": {
+        "type": "MultiSend",
+        "prefix": "cosmos.bank.v1beta1.MsgMultiSend"
+      },
       "delegate": {
         "type": "delegate",
         "prefix": "cosmos.staking.v1beta1.MsgDelegate"

@@ -24,8 +24,8 @@ class MsgDelegate extends Builder.Msg {
 
     getModel(){
         let msg = new (this.getModelClass())();
-        msg.setDelegatorAddress(TxHelper.ecodeModelAddress(this.delegator_address));
-        msg.setValidatorAddress(TxHelper.ecodeModelAddress(this.validator_address));
+        msg.setDelegatorAddress(this.delegator_address);
+        msg.setValidatorAddress(this.validator_address);
         msg.setAmount(TxModelCreator.createCoinModel(this.amount.denom, this.amount.amount));
         return msg;
     }
@@ -82,8 +82,8 @@ class MsgBeginUnbonding extends Builder.Msg {
 
     getModel(){
         let msg = new (this.getModelClass())();
-        msg.setDelegatorAddress(TxHelper.ecodeModelAddress(this.delegator_address));
-        msg.setValidatorAddress(TxHelper.ecodeModelAddress(this.validator_address));
+        msg.setDelegatorAddress(this.delegator_address);
+        msg.setValidatorAddress(this.validator_address);
         msg.setAmount(TxModelCreator.createCoinModel(this.amount.denom, this.amount.amount));
         return msg;
     }
@@ -143,9 +143,9 @@ class MsgBeginRedelegate extends Builder.Msg {
 
     getModel(){
         let msg = new (this.getModelClass())();
-        msg.setDelegatorAddress(TxHelper.ecodeModelAddress(this.delegator_address));
-        msg.setValidatorSrcAddress(TxHelper.ecodeModelAddress(this.validator_src_address));
-        msg.setValidatorDstAddress(TxHelper.ecodeModelAddress(this.validator_dst_address));
+        msg.setDelegatorAddress(this.delegator_address);
+        msg.setValidatorSrcAddress(this.validator_src_address);
+        msg.setValidatorDstAddress(this.validator_dst_address);
         msg.setAmount(TxModelCreator.createCoinModel(this.amount.denom, this.amount.amount));
         return msg;
     }
@@ -199,7 +199,7 @@ class MsgBeginRedelegate extends Builder.Msg {
 
 module.exports = class Stake {
     static CreateMsgDelegate(msg) {
-        return new MsgDelegate(msg.delegatorAddress, msg.validatorAddress, msg.amount);
+        return new MsgDelegate(msg.delegator_address, msg.validator_address, msg.amount);
     }
 
     static CreateMsgBeginUnbonding(msg) {
