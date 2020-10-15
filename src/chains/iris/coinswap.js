@@ -29,7 +29,7 @@ class MsgSwapOrder extends Builder.Msg{
 
         let outputModel = new Coinswap_pb.Output();
         outputModel.setAddress(TxHelper.ecodeModelAddress(this.output.address));
-        outputModel.setCoin(TxModelCreator.createCoinModel(this.output.coin.denom, this.input.coin.amount));
+        outputModel.setCoin(TxModelCreator.createCoinModel(this.output.coin.denom, this.output.coin.amount));
 
         msg.setInput(inputModel);
         msg.setOutput(outputModel);
