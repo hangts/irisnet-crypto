@@ -6,7 +6,7 @@
         "prefix": "cosmos.bank.v1beta1.MsgSend"
       },
       "multiSend": {
-        "type": "MultiSend",
+        "type": "multiSend",
         "prefix": "cosmos.bank.v1beta1.MsgMultiSend"
       },
       "delegate": {

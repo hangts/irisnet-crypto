@@ -96,7 +96,7 @@ class MsgMultiSend extends Builder.Msg {
             let output = new bank_pb.Output();
             output.setAddress(item.address);
             item.coins.forEach((coin)=>{
-                outputs.addCoins(TxModelCreator.createCoinModel(coin.denom, coin.amount));
+                output.addCoins(TxModelCreator.createCoinModel(coin.denom, coin.amount));
             });
             msg.addOutputs(output);
         });
